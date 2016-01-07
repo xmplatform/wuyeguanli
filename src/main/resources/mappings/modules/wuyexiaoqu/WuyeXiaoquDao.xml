@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.wuyexiaoqu.dao.WuyeXiaoquDao">
+    
+	<sql id="wuyeXiaoquColumns">
+		a.id AS "id",
+		a.mingcheng AS "mingcheng",
+		a.dizhi AS "dizhi",
+		a.fuzeren AS "fuzeren",
+		a.lianxiren AS "lianxiren",
+		a.dianhua AS "xiaoqudh",
+		a.zhibandh AS "zhibandh",
+		a.jiansherq AS "jiansherq",
+		a.loudongshu AS "loudongshu",
+		a.jianzhupm AS "jianzhupm",
+		a.gonggongpm AS "gonggongpm",
+		a.lvhuapm AS "lvhuapm",
+		a.daolupm AS "daolupm",
+		a.chekupm AS "chekupm",
+		a.chewei AS "chewei",
+		a.hushu AS "hushu",
+		a.pid AS "wuye.id",
+		b.mingcheng AS "wuye.mingcheng",
+		a.tupian AS "tupian",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="wuyeXiaoquJoins">
+		LEFT JOIN wuye_jichu b ON a.pid=b.id
+	</sql>
+    
+	<select id="get" resultType="WuyeXiaoqu">
+		SELECT 
+			<include refid="wuyeXiaoquColumns"/>
+		FROM wuye_jichu a
+		<include refid="wuyeXiaoquJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="WuyeXiaoqu">
+		SELECT 
+			<include refid="wuyeXiaoquColumns"/>
+		FROM wuye_jichu a
+		<include refid="wuyeXiaoquJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}  and a.leixingbs=1
+			<if test="mingcheng != null and mingcheng != ''">
+				AND a.mingcheng LIKE 
+					<if test="dbName == 'oracle'">'%'||#{mingcheng}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{mingcheng}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{mingcheng},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="WuyeXiaoqu">
+		SELECT 
+			<include refid="wuyeXiaoquColumns"/>
+		FROM wuye_jichu a
+		<include refid="wuyeXiaoquJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}  and leixingbs=1
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	<select id="findListByPid" resultType="WuyeXiaoqu">
+		SELECT 
+			a.id,a.mingcheng
+		FROM wuye_jichu a
+		<include refid="wuyeXiaoquJoins"/>
+		<where>
+			a.pid = #{pid}
+		</where>		
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO wuye_jichu(
+			id,
+			mingcheng,
+			dizhi,
+			fuzeren,
+			lianxiren,
+			dianhua,
+			zhibandh,
+			jiansherq,
+			loudongshu,
+			jianzhupm,
+			gonggongpm,
+			lvhuapm,
+			daolupm,
+			chekupm,
+			chewei,
+			hushu,
+			pid,
+			pids,
+			tupian,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag,
+			leixingbs
+		) VALUES (
+			#{id},
+			#{mingcheng},
+			#{dizhi},
+			#{fuzeren},
+			#{lianxiren},
+			#{xiaoqudh},
+			#{zhibandh},
+			#{jiansherq},
+			#{loudongshu},
+			#{jianzhupm},
+			#{gonggongpm},
+			#{lvhuapm},
+			#{daolupm},
+			#{chekupm},
+			#{chewei},
+			#{hushu},
+			#{wuye.id},
+			#{wuye.id},
+			#{tupian},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag},
+			1
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE wuye_jichu SET 	
+			mingcheng = #{mingcheng},
+			dizhi = #{dizhi},
+			fuzeren = #{fuzeren},
+			lianxiren = #{lianxiren},
+			dianhua = #{xiaoqudh},
+			zhibandh = #{zhibandh},
+			jiansherq = #{jiansherq},
+			loudongshu = #{loudongshu},
+			jianzhupm = #{jianzhupm},
+			gonggongpm = #{gonggongpm},
+			lvhuapm = #{lvhuapm},
+			daolupm = #{daolupm},
+			chekupm = #{chekupm},
+			chewei = #{chewei},
+			hushu = #{hushu},
+			pid = #{wuye.id},
+			tupian = #{tupian},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE wuye_jichu SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

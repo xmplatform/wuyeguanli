@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.wuyerenyuan.dao.DictRenyuanDao">
+    
+	<sql id="dictRenyuanColumns">
+		a.id AS "id",
+		a.xingming AS "xingming",
+		a.xingbie AS "xingbie",
+		a.shengfenz AS "shengfenz",
+		CONCAT(xiaoqu.mingcheng,'-',loudong.mingcheng,'-',danyuan.mingcheng,'-',taohu.mingcheng) AS "path",
+		a.heimingd AS "heimingd",
+		a.pids AS "pids",
+		a.renyuanlx AS "renyuanlx",
+		a.gongzuodw AS "gongzuodw",
+		a.zhuzhaidh AS "zhuzhaidh",
+		a.danweidh AS "danweidh",
+		a.suishendh AS "suishendh",
+		a.hukouszd AS "hukouszd",
+		a.zhaopian AS "zhaopian",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="dictRenyuanJoins">
+		LEFT JOIN wuye_jichu AS taohu ON a.pid=taohu.id
+		LEFT JOIN wuye_jichu AS danyuan ON taohu.pid=danyuan.id
+		LEFT JOIN wuye_jichu AS loudong ON danyuan.pid=loudong.id
+		LEFT JOIN wuye_jichu AS xiaoqu ON loudong.pid=xiaoqu.id
+	</sql>
+    
+	<select id="get" resultType="DictRenyuan">
+		SELECT 
+			<include refid="dictRenyuanColumns"/>
+		FROM dict_renyuan a
+		<include refid="dictRenyuanJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="DictRenyuan">
+		SELECT 
+			<include refid="dictRenyuanColumns"/>
+		FROM dict_renyuan a
+		<include refid="dictRenyuanJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="xingming != null and xingming != ''">
+				AND a.xingming = #{xingming}
+			</if>
+			<if test="renyuanlx != null and renyuanlx != ''">
+				AND a.renyuanlx = #{renyuanlx}
+			</if>
+			<if test="suishendh != null and suishendh != ''">
+				AND a.suishendh = #{suishendh}
+			</if>
+			<if test="pids != null and pids != ''">
+				AND (a.pids LIKE 
+					<if test="dbName == 'oracle'">'%'||#{pids}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{pids}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{pids},'%')</if>
+				OR a.id=#{id})
+			</if>
+			<if test="pid != null and pid != ''">
+				AND a.pid = #{pid}
+			</if>
+			<if test="heimingd != null and heimingd != ''">
+				AND a.heimingd = #{heimingd}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="DictRenyuan">
+		SELECT 
+			<include refid="dictRenyuanColumns"/>
+		FROM dict_renyuan a
+		<include refid="dictRenyuanJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO dict_renyuan(
+			id,
+			xingming,
+			xingbie,
+			shengfenz,
+			pid,
+			pids,
+			renyuanlx,
+			gongzuodw,
+			zhuzhaidh,
+			danweidh,
+			suishendh,
+			hukouszd,
+			zhaopian,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{xingming},
+			#{xingbie},
+			#{shengfenz},
+			#{pid},
+			#{pids},
+			#{renyuanlx},
+			#{gongzuodw},
+			#{zhuzhaidh},
+			#{danweidh},
+			#{suishendh},
+			#{hukouszd},
+			#{zhaopian},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE dict_renyuan SET 	
+			xingming = #{xingming},
+			xingbie = #{xingbie},
+			shengfenz = #{shengfenz},
+			renyuanlx = #{renyuanlx},
+			gongzuodw = #{gongzuodw},
+			zhuzhaidh = #{zhuzhaidh},
+			danweidh = #{danweidh},
+			suishendh = #{suishendh},
+			hukouszd = #{hukouszd},
+			zhaopian = #{zhaopian},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE dict_renyuan SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="moveOut">
+		UPDATE dict_renyuan SET
+		pid='',del_flag=1
+		WHERE id=#{renyuanId}
+	</update>
+		
+	<update id="addHeimingd">
+		UPDATE dict_renyuan SET
+			heimingd=1
+		WHERE id=#{renyuanId}
+	</update>
+	
+	<update id="delHeimingd">
+		UPDATE dict_renyuan SET
+			heimingd=0
+		WHERE id=#{renyuanId}
+	</update>
+</mapper>

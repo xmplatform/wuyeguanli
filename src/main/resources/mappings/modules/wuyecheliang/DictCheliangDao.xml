@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.wuyecheliang.dao.DictCheliangDao">
+    
+	<sql id="dictCheliangColumns">
+		a.id AS "id",
+		a.chepai AS "chepai",
+		renyuan.id AS "renyuan.id",
+		renyuan.xingming AS "renyuan.xingming",
+		renyuan.suishendh AS "renyuan.suishendh",
+		CONCAT(xiaoqu.mingcheng,'-',loudong.mingcheng,'-',danyuan.mingcheng,'-',taohu.mingcheng) AS "renyuan.path",
+		chewei.id AS "chewei.id",
+		chewei.mingcheng AS "chewei.mingcheng",
+		a.chekah AS "chekah",
+		a.leixing AS "leixing",
+		a.pinpai AS "pinpai",
+		a.yanse AS "yanse",
+		a.churuzh AS "churuzh",
+		a.kaishisj AS "kaishisj",
+		a.jieshusj AS "jieshusj",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="dictCheliangJoins">
+		LEFT JOIN dict_renyuan renyuan ON renyuan.id=a.renyuanId
+		LEFT JOIN wuye_jichu taohu ON taohu.id=renyuan.pid
+		LEFT JOIN wuye_jichu danyuan ON danyuan.id=taohu.pid
+		LEFT JOIN wuye_jichu loudong ON loudong.id=danyuan.pid
+		LEFT JOIN wuye_jichu xiaoqu ON xiaoqu.id=loudong.pid
+		LEFT JOIN dict_chewei chewei ON chewei.id=a.cheweiId
+	</sql>
+    
+	<select id="get" resultType="DictCheliang">
+		SELECT 
+			<include refid="dictCheliangColumns"/>
+		FROM dict_cheliang a
+		<include refid="dictCheliangJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="DictCheliang">
+		SELECT 
+			<include refid="dictCheliangColumns"/>
+		FROM dict_cheliang a
+		<include refid="dictCheliangJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="chepai != null and chepai != ''">
+				AND a.chepai LIKE concat('%',#{chepai},'%')
+			</if>
+			<if test="renyuan != null and renyuan != ''">
+				AND renyuan.xingming LIKE concat('%',#{renyuan.xingming},'%')
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="DictCheliang">
+		SELECT 
+			<include refid="dictCheliangColumns"/>
+		FROM dict_cheliang a
+		<include refid="dictCheliangJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO dict_cheliang(
+			id,
+			chepai,
+			cheweiId,
+			chekah,
+			leixing,
+			pinpai,
+			yanse,
+			renyuanId,
+			churuzh,
+			kaishisj,
+			jieshusj,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{chepai},
+			#{chewei.id},
+			#{chekah},
+			#{leixing},
+			#{pinpai},
+			#{yanse},
+			#{renyuan.id},
+			#{churuzh},
+			#{kaishisj},
+			#{jieshusj},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE dict_cheliang SET 	
+			chepai = #{chepai},
+			cheweiId = #{chewei.id},
+			leixing = #{leixing},
+			chekah = #{chekah},
+			pinpai = #{pinpai},
+			yanse = #{yanse},
+			renyuanId = #{renyuan.id},
+			churuzh = #{churuzh},
+			kaishisj = #{kaishisj},
+			jieshusj = #{jieshusj},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE dict_cheliang SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

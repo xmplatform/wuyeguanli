@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.wuyechewei.dao.DictCheweiDao">
+    
+	<sql id="dictCheweiColumns">
+		a.id AS "id",
+		a.cheweikh AS "cheweikh",
+		a.mingcheng AS "mingcheng",
+		a.zhuangtai AS "zhuangtai",
+		a.shifousy AS "shifousy",
+		a.weizhi AS "weizhi",
+		a.jiazhi AS "jiazhi",
+		a.chuzujg AS "chuzujg",
+		a.kaishisj AS "kaishisj",
+		a.jieshusj AS "jieshusj",
+		ren.id AS "renyuan.id",
+		ren.xingming AS "renyuan.xingming",
+		ren.suishendh AS "renyuan.suishendh",
+		a.xiaoshousj AS "xiaoshousj",
+		a.xiaoshoujg AS "xiaoshoujg",
+		a.suoshuquyu AS "suoshuquyu",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="dictCheweiJoins">
+		LEFT JOIN dict_renyuan ren ON ren.id=a.renyuanId
+	</sql>
+    
+	<select id="get" resultType="DictChewei">
+		SELECT 
+			<include refid="dictCheweiColumns"/>
+		FROM dict_chewei a
+		<include refid="dictCheweiJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="DictChewei">
+		SELECT 
+			<include refid="dictCheweiColumns"/>
+		FROM dict_chewei a
+		<include refid="dictCheweiJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="cheweikh != null and cheweikh != ''">
+				AND a.cheweikh LIKE concat('%',#{cheweikh},'%')
+			</if>
+			<if test="mingcheng != null and mingcheng != ''">
+				AND a.mingcheng LIKE concat('%',#{mingcheng},'%')
+			</if>
+			<if test="suoshuquyu != null and suoshuquyu != ''">
+				AND a.suoshuquyu = #{suoshuquyu}
+			</if>
+			<if test="zhuangtai != null and zhuangtai != ''">
+				AND a.zhuangtai = #{zhuangtai}
+			</if>
+			<if test="shifousy != null and shifousy != ''">
+				AND a.shifousy = #{shifousy}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="DictChewei">
+		SELECT 
+			<include refid="dictCheweiColumns"/>
+		FROM dict_chewei a
+		<include refid="dictCheweiJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO dict_chewei(
+			id,
+			cheweikh,
+			mingcheng,
+			weizhi,
+			jiazhi,
+			chuzujg,
+			suoshuquyu,
+			zhuangtai,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{cheweikh},
+			#{mingcheng},
+			#{weizhi},
+			#{jiazhi},
+			#{chuzujg},
+			#{suoshuquyu},
+			#{zhuangtai},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE dict_chewei SET 	
+			cheweikh = #{cheweikh},
+			mingcheng = #{mingcheng},
+			weizhi = #{weizhi},
+			jiazhi = #{jiazhi},
+			chuzujg = #{chuzujg},
+			suoshuquyu = #{suoshuquyu},
+			zhuangtai = #{zhuangtai},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="chuzu">
+		UPDATE dict_chewei SET
+			zhuangtai=2,
+			shifousy=1,
+			renyuanId=#{renyuan.id},
+			kaishisj=#{kaishisj},
+			jieshusj=#{jieshusj},
+			chuzujg=#{chuzujg}
+		WHERE id=#{id}
+	</update>
+	
+	<update id="shifang">
+		UPDATE dict_chewei SET
+			shifousy=0
+		WHERE id=#{cheweiId}
+	</update>
+	
+	<update id="chushou">
+		UPDATE dict_chewei SET
+			zhuangtai=1,
+			shifousy=1,
+			renyuanId=#{renyuan.id},
+			xiaoshoujg=#{xiaoshoujg},
+			xiaoshousj=#{xiaoshousj}
+		WHERE id=#{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE dict_chewei SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

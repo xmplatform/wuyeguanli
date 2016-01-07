@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.baoxiu_paiban.dao.BaoxiuPaibanDao">
+    
+	<sql id="baoxiuPaibanColumns">
+		a.id AS "id",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag",
+		b.id AS "renyuanid.id",
+		b.name AS "renyuanid.name",
+		a.zhibansj AS "zhibansj",
+		a.riStr AS "riStr"
+	</sql>
+	
+	<sql id="baoxiuPaibanJoins">
+		LEFT JOIN sys_user b ON b.id=a.renyuanId
+	</sql>
+    
+	<select id="get" resultType="BaoxiuPaiban">
+		SELECT 
+			<include refid="baoxiuPaibanColumns"/>
+		FROM baoxiu_paiban a
+		<include refid="baoxiuPaibanJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="getByNianYue" resultType="BaoxiuPaiban">
+		SELECT 
+			<include refid="baoxiuPaibanColumns"/>
+		FROM baoxiu_paiban a
+		<include refid="baoxiuPaibanJoins"/>
+		WHERE a.zhibansj = #{zhibansj} AND a.renyuanId=#{renyuanid.id}
+	</select>
+	
+	<select id="findList" resultType="BaoxiuPaiban">
+		SELECT 
+			<include refid="baoxiuPaibanColumns"/>
+		FROM baoxiu_paiban a
+		<include refid="baoxiuPaibanJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="renyuanid != null and renyuanid.id != null and renyuanid.id != ''">
+				AND a.renyuanid = #{renyuanid.id}
+			</if>
+			<if test="zhibansj != null and zhibansj != ''">
+				AND a.zhibansj = #{zhibansj}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="BaoxiuPaiban">
+		SELECT 
+			<include refid="baoxiuPaibanColumns"/>
+		FROM baoxiu_paiban a
+		<include refid="baoxiuPaibanJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="loadWeixiuList" resultType="User">
+		SELECT 
+			u.id,u.name
+		FROM sys_user u,sys_user_role ur 
+		WHERE
+			u.id=ur.user_id AND ur.role_id='ae4a8238245e4a829c5361f89b819d93'
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO baoxiu_paiban(
+			id,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag,
+			renyuanid,
+			zhibansj,
+			riStr
+		) VALUES (
+			#{id},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag},
+			#{renyuanid.id},
+			#{zhibansj},
+			#{riStr}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE baoxiu_paiban SET 	
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks},
+			renyuanid = #{renyuanid.id},
+			zhibansj = #{zhibansj},
+			riStr = #{riStr}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM baoxiu_paiban WHERE id = #{id}
+	</update>
+	
+</mapper>

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.wuyejiben.dao.WuyeJibenDao">
+    
+	<sql id="wuyeJibenColumns">
+		a.id AS "id",
+		a.mingcheng AS "mingcheng",
+		a.renshu AS "renshu",
+		a.dizhi AS "dizhi",
+		a.dianhua AS "dianhua",
+		a.fuzeren AS "fuzeren",
+		a.youbian AS "youbian",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="wuyeJibenJoins">
+	</sql>
+    
+	<select id="get" resultType="WuyeJiben">
+		SELECT 
+			<include refid="wuyeJibenColumns"/>
+		FROM wuye_jichu a
+		<include refid="wuyeJibenJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="loadSubById" resultType="WuyeJiben">
+		SELECT 
+			<include refid="wuyeJibenColumns"/>
+		FROM wuye_jichu a
+		<include refid="wuyeJibenJoins"/>
+		WHERE a.pid = #{id}
+	</select>
+	<select id="findList" resultType="WuyeJiben">
+		SELECT 
+			<include refid="wuyeJibenColumns"/>
+		FROM wuye_jichu a
+		<include refid="wuyeJibenJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}  and leixingbs=0
+			<if test="mingcheng != null and mingcheng != ''">
+				AND a.mingcheng LIKE 
+					<if test="dbName == 'oracle'">'%'||#{mingcheng}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{mingcheng}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{mingcheng},'%')</if>
+			</if>
+			<if test="dizhi != null and dizhi != ''">
+				AND a.dizhi = #{dizhi}
+			</if>
+			<if test="dianhua != null and dianhua != ''">
+				AND a.dianhua = #{dianhua}
+			</if>
+			<if test="fuzeren != null and fuzeren != ''">
+				AND a.fuzeren = #{fuzeren}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="WuyeJiben">
+		SELECT 
+			<include refid="wuyeJibenColumns"/>
+		FROM wuye_jichu a
+		<include refid="wuyeJibenJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}  and leixingbs=0
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO wuye_jichu(
+			id,
+			mingcheng,
+			renshu,
+			dizhi,
+			dianhua,
+			fuzeren,
+			youbian,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{mingcheng},
+			#{renshu},
+			#{dizhi},
+			#{dianhua},
+			#{fuzeren},
+			#{youbian},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE wuye_jichu SET 	
+			mingcheng = #{mingcheng},
+			renshu = #{renshu},
+			dizhi = #{dizhi},
+			dianhua = #{dianhua},
+			fuzeren = #{fuzeren},
+			youbian = #{youbian},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE wuye_jichu SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

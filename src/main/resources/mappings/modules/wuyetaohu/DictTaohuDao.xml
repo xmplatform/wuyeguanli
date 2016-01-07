@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.wuyetaohu.dao.DictTaohuDao">
+    
+	<sql id="dictTaohuColumns">
+		a.id AS "id",
+		a.mingcheng AS "menpai",
+		a.huxing AS "huxing",
+		a.pids AS "pids",
+		a.chanquanzheng AS "chanquanzheng",
+		CONCAT(d.mingcheng,'-',c.mingcheng,'-',b.mingcheng) AS "weizhi",
+		f.xingming AS "huzhu.xingming",
+		f.suishendh AS "huzhu.suishendh",
+		a.fangjianlx AS "fangjianlx",
+		a.yongtu AS "yongtu",
+		a.zhuangxiuqk AS "zhuangxiuqk",
+		a.jiaofangsj AS "jiaofangsj",
+		a.xiaoshouzt AS "xiaoshouzt",
+		a.shiyongzt AS "shiyongzt",
+		e.num AS "num",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="dictTaohuJoins">
+		LEFT JOIN wuye_jichu b ON b.id = a.pid
+		LEFT JOIN wuye_jichu c ON c.id = b.pid
+		LEFT JOIN wuye_jichu d ON d.id = c.pid
+		LEFT JOIN (SELECT COUNT(id)num,pid FROM dict_renyuan  GROUP BY pid) e ON e.pid = a.id
+		LEFT JOIN dict_renyuan f ON f.pid=a.id 
+	</sql>
+    
+	<select id="get" resultType="DictTaohu">
+		SELECT 
+			<include refid="dictTaohuColumns"/>
+		FROM wuye_jichu a
+		<include refid="dictTaohuJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="loadAllData" resultType="WuyeJiben">
+		SELECT a.id,
+		a.pid AS dizhi,
+		a.pids AS "dianhua",
+		a.mingcheng,
+		a.leixingbs AS renshu 
+		FROM wuye_jichu a
+		<where>
+			a.del_flag = 0 AND leixingbs &lt; #{leixingbs} ORDER BY a.mingcheng
+		</where>
+	</select>
+	
+	<select id="findList" resultType="DictTaohu">
+		SELECT 
+			<include refid="dictTaohuColumns"/>
+		FROM wuye_jichu a
+		<include refid="dictTaohuJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL} and a.leixingbs=4
+			<if test="huxing != null and huxing != ''">
+				AND a.huxing = #{huxing}
+			</if>
+			<if test="xiaoshouzt != null and xiaoshouzt != ''">
+				AND a.xiaoshouzt = #{xiaoshouzt}
+			</if>
+			<if test="shiyongzt != null and shiyongzt != ''">
+				AND a.shiyongzt = #{shiyongzt}
+			</if>
+			<if test="pids != null and pids != ''">
+				AND (a.pids LIKE 
+					<if test="dbName == 'oracle'">'%'||#{pids}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{pids}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{pids},'%')</if>
+				OR a.id=#{id})
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="DictTaohu">
+		SELECT 
+			<include refid="dictTaohuColumns"/>
+		FROM wuye_jichu a
+		<include refid="dictTaohuJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL} and a.leixingbs=4
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO wuye_jichu(
+			id,
+			mingcheng,
+			huxing,
+			shiyongpm,
+			jianzhupm,
+			gongtanpm,
+			jifeipm,
+			chanquanzheng,
+			pid,
+			pids,
+			fangjianlx,
+			yongtu,
+			zhuangxiuqk,
+			cenggao,
+			jiaofangsj,
+			tupian,
+			xiaoshouzt,
+			shiyongzt,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag,
+			leixingbs
+		) VALUES (
+			#{id},
+			#{menpai},
+			#{huxing},
+			#{shiyongpm},
+			#{jianzhupm},
+			#{gongtanpm},
+			#{jifeipm},
+			#{chanquanzheng},
+			#{pid},
+			#{pids},
+			#{fangjianlx},
+			#{yongtu},
+			#{zhuangxiuqk},
+			#{zongcg},
+			#{jiaofangsj},
+			#{tupian},
+			#{xiaoshouzt},
+			#{shiyongzt},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag},4
+		)
+	</insert>
+	<update id="sale">
+		UPDATE wuye_jichu SET
+		xiaoshouzt = 1
+		WHERE id=#{taohuId}
+	</update>
+	<update id="update">
+		UPDATE wuye_jichu SET 	
+			mingcheng = #{menpai},
+			huxing = #{huxing},
+			shiyongpm = #{shiyongpm},
+			jianzhupm = #{jianzhupm},
+			gongtanpm = #{gongtanpm},
+			jifeipm = #{jifeipm},
+			chanquanzheng = #{chanquanzheng},
+			fangjianlx = #{fangjianlx},
+			yongtu = #{yongtu},
+			zhuangxiuqk = #{zhuangxiuqk},
+			cenggao = #{zongcg},
+			jiaofangsj = #{jiaofangsj},
+			tupian = #{tupian},
+			xiaoshouzt = #{xiaoshouzt},
+			shiyongzt = #{shiyongzt},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE wuye_jichu SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id in(#{id})
+	</update>
+	<select id="findTaohuByDianhua" resultType="DictTaohu">
+		SELECT 
+			<include refid="dictTaohuColumns"/>
+		FROM wuye_jichu a
+		<include refid="dictTaohuJoins"/>
+		WHERE f.suishendh = #{dianhua}
+	</select>
+</mapper>

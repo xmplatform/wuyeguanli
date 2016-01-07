@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.loudong.dao.DictLoudongDao">
+    
+	<sql id="dictLoudongColumns">
+		a.id AS "id",
+		a.mingcheng AS "mingcheng",
+		CONCAT(c.mingcheng,'-',b.mingcheng) AS "path",
+		a.pids AS "pids",
+		a.chaoxiang AS "chaoxiang",
+		a.cenggao AS "cenggao",
+		a.jiegou AS "jiegou",
+		a.leixing AS "leixing",
+		a.juweihui AS "juweihui",
+		a.paichusuo AS "paichusuo",
+		a.tupian AS "tupian",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="dictLoudongJoins">
+		LEFT JOIN wuye_jichu b ON b.id=a.pid
+		LEFT JOIN wuye_jichu c ON c.id=b.pid
+	</sql>
+    
+	<select id="get" resultType="DictLoudong">
+		SELECT 
+			<include refid="dictLoudongColumns"/>
+		FROM wuye_jichu a
+		<include refid="dictLoudongJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="DictLoudong">
+		SELECT 
+			<include refid="dictLoudongColumns"/>
+		FROM wuye_jichu a
+		<include refid="dictLoudongJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL} and a.leixingbs=2
+			<if test="juweihui != null and juweihui != ''">
+				AND a.juweihui = #{juweihui}
+			</if>
+			<if test="paichusuo != null and paichusuo != ''">
+				AND a.paichusuo = #{paichusuo}
+			</if>
+			<if test="pids != null and pids != ''">
+				AND (a.pids LIKE 
+					<if test="dbName == 'oracle'">'%'||#{pids}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{pids}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{pids},'%')</if>
+				OR a.id=#{id})
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="DictLoudong">
+		SELECT 
+			<include refid="dictLoudongColumns"/>
+		FROM wuye_jichu a
+		<include refid="dictLoudongJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL} and a.leixingbs=2
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO wuye_jichu(
+			id,
+			mingcheng,
+			pid,
+			pids,
+			chaoxiang,
+			cenggao,
+			jiegou,
+			leixing,
+			juweihui,
+			paichusuo,
+			tupian,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag,
+			leixingbs
+		) VALUES (
+			#{id},
+			#{mingcheng},
+			#{pid},
+			#{pids},
+			#{chaoxiang},
+			#{cenggao},
+			#{jiegou},
+			#{leixing},
+			#{juweihui},
+			#{paichusuo},
+			#{tupian},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag},2
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE wuye_jichu SET 	
+			mingcheng = #{mingcheng},
+			chaoxiang = #{chaoxiang},
+			cenggao = #{cenggao},
+			jiegou = #{jiegou},
+			leixing = #{leixing},
+			juweihui = #{juweihui},
+			paichusuo = #{paichusuo},
+			tupian = #{tupian},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE wuye_jichu SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
