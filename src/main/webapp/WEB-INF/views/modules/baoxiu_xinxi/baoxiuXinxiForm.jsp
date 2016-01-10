@@ -21,6 +21,8 @@
 					}
 				}
 			});
+			if($('#yuyuesj').val().length>0)
+				myPick();
 		});
 		//查找这个日期下的空闲维修员
 		function myPick(){
@@ -74,6 +76,12 @@
 			<div class="controls">
 				<form:input path="dianhua" onblur="findTaohu()" htmlEscape="false" maxlength="15" class="input-xlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">维修区域：</label>
+			<div class="controls">
+				<form:select path="weixiuqy" items="${fns:getDictList('d_weixiuqy')}" itemLabel="label" itemValue="value"/>
 			</div>
 		</div>
 		<div class="control-group">

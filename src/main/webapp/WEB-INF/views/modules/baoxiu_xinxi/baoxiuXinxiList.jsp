@@ -44,8 +44,10 @@
 			<tr>
 				<th>标题</th>
 				<th>位置</th>
+				<th>报修区域</th>
 				<th>报修电话</th>
 				<th>预约时间</th>
+				<th>录入人</th>
 				<th>接报时间</th>
 				<th>维修员</th>
 				<th>状态</th>
@@ -61,12 +63,14 @@
 				<td>
 					${baoxiuXinxi.taohuid}
 				</td>
+				<td>${fns:getDictLabel(baoxiuXinxi.weixiuqy, 'd_weixiuqy', '')}</td>
 				<td>
 					${baoxiuXinxi.dianhua}
 				</td>
 				<td>
 					<fmt:formatDate value="${baoxiuXinxi.yuyuesj}" pattern="yyyy-MM-dd HH:mm"/>
 				</td>
+				<td>${baoxiuXinxi.createBy.name }</td>
 				<td>
 					<fmt:formatDate value="${baoxiuXinxi.createDate}" pattern="yyyy-MM-dd"/>
 				</td>
@@ -74,13 +78,19 @@
 					${baoxiuXinxi.weixiuy.name}
 				</td>
 				<td>
-					<c:if test="${baoxiuXinxi.zhuangtai==0 }">已接件</c:if>
+					<c:if test="${baoxiuXinxi.zhuangtai==0 }">未接件</c:if>
 					<c:if test="${baoxiuXinxi.zhuangtai==1 }">维修中</c:if>
+					<c:if test="${baoxiuXinxi.zhuangtai==2 }">维修完毕</c:if>
+					<c:if test="${baoxiuXinxi.zhuangtai==9 }">已完结</c:if>
 				</td>
 				<shiro:hasPermission name="baoxiu_xinxi:baoxiuXinxi:edit"><td>
-    				<a href="${ctx}/baoxiu_xinxi/baoxiuXinxi/form?id=${baoxiuXinxi.id}">修改</a>
-					<a href="${ctx}/baoxiu_xinxi/baoxiuXinxi/delete?id=${baoxiuXinxi.id}" onclick="return confirmx('确认要删除该报修信息吗？', this.href)">删除</a>
-					<a href="${ctx}/baoxiu_xinxi/baoxiuXinxi/printWeixiu?id=${baoxiuXinxi.id}" target="_blank">打印</a>
+					<c:if test="${baoxiuXinxi.zhuangtai<9}">
+	    				<a href="${ctx}/baoxiu_xinxi/baoxiuXinxi/form?id=${baoxiuXinxi.id}">修改</a>
+						<a href="${ctx}/baoxiu_xinxi/baoxiuXinxi/delete?id=${baoxiuXinxi.id}" onclick="return confirmx('确认要删除该报修信息吗？', this.href)">删除</a>
+						<a href="${ctx}/baoxiu_xinxi/baoxiuXinxi/printWeixiu?id=${baoxiuXinxi.id}" target="_blank">打印</a>
+					</c:if>
+					<a href="${ctx}/baoxiu_jilu/baoxiuJilu?xinxi.id=${baoxiuXinxi.id}">维修记录</a>
+					<a href="${ctx}/baoxiu_huifang/baoxiuHuifang?xinxiId=${baoxiuXinxi.id}">客户回访</a>
 				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>

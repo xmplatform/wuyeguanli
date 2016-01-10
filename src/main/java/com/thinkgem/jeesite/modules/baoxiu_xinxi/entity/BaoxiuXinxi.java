@@ -24,6 +24,7 @@ public class BaoxiuXinxi extends DataEntity<BaoxiuXinxi> {
 	private String dianhua;		// 报修电话
 	private User weixiuy;		//维修员
 	private Date yuyuesj;		// 预约时间
+	private Integer weixiuqy;	//维修区域
 	
 	public BaoxiuXinxi() {
 		super();
@@ -84,6 +85,14 @@ public class BaoxiuXinxi extends DataEntity<BaoxiuXinxi> {
 
 	public void setWeixiuy(User weixiuy) {
 		this.weixiuy = weixiuy;
+	}
+
+	public Integer getWeixiuqy() {
+		return weixiuqy;
+	}
+
+	public void setWeixiuqy(Integer weixiuqy) {
+		this.weixiuqy = weixiuqy;
 	}
 	
 }

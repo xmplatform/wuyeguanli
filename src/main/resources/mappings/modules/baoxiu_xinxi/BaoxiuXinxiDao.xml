@@ -5,6 +5,7 @@
 	<sql id="baoxiuXinxiColumns">
 		a.id AS "id",
 		a.create_by AS "createBy.id",
+		c.name AS "createBy.name",
 		a.create_date AS "createDate",
 		a.update_by AS "updateBy.id",
 		a.update_date AS "updateDate",
@@ -16,11 +17,13 @@
 		a.dianhua AS "dianhua",
 		a.yuyuesj AS "yuyuesj",
 		b.id AS "weixiuy.id",
-		b.name AS "weixiuy.name"
+		b.name AS "weixiuy.name",
+		a.weixiuqy AS "weixiuqy"
 	</sql>
 	
 	<sql id="baoxiuXinxiJoins">
 		LEFT JOIN sys_user b ON b.id=a.weixiuyuanId
+		LEFT JOIN sys_user c ON c.id=a.create_by
 	</sql>
     
 	<select id="get" resultType="BaoxiuXinxi">
@@ -93,7 +96,8 @@
 			taohuid,
 			dianhua,
 			yuyuesj,
-			weixiuyuanId
+			weixiuyuanId,
+			weixiuqy
 		) VALUES (
 			#{id},
 			#{createBy.id},
@@ -103,11 +107,12 @@
 			#{delFlag},
 			#{mingcheng},
 			#{remarks},
-			0,
+			1,
 			#{taohuid},
 			#{dianhua},
 			#{yuyuesj},
-			#{weixiuy.id}
+			#{weixiuy.id},
+			#{weixiuqy}
 		)
 	</insert>
 	
@@ -121,7 +126,8 @@
 			taohuid = #{taohuid},
 			dianhua = #{dianhua},
 			yuyuesj = #{yuyuesj},
-			weixiuyuanId=#{weixiuy.id}
+			weixiuyuanId=#{weixiuy.id},
+			weixiuqy = #{weixiuqy}
 		WHERE id = #{id}
 	</update>
 	
