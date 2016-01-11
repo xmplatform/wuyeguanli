@@ -7,6 +7,7 @@
 		a.mingcheng AS "mingcheng",
 		a.xinxiid AS "xinxiid",
 		a.create_by AS "createBy.id",
+		b.name AS "createBy.name",
 		a.create_date AS "createDate",
 		a.update_by AS "updateBy.id",
 		a.update_date AS "updateDate",
@@ -15,6 +16,7 @@
 	</sql>
 	
 	<sql id="jianyiHuifangJoins">
+		LEFT JOIN sys_user b ON b.id=a.create_by
 	</sql>
     
 	<select id="get" resultType="JianyiHuifang">

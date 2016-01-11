@@ -25,7 +25,7 @@
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
-			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="button" value="返回" onclick="javascript:history.go(-1)"/></li>
+			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="button" value="返回" onclick="javascript:window.location.href='${ctx}/baoxiu_xinxi/baoxiuXinxi/'"/></li>
 			<li class="clearfix"></li>
 		</ul>
 	</form:form>
@@ -44,9 +44,9 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="baoxiuHuifang">
 			<tr>
-				<td><a href="${ctx}/baoxiu_huifang/baoxiuHuifang/form?id=${baoxiuHuifang.id}">
+				<td>
 					${baoxiuHuifang.mingcheng}
-				</a></td>
+				</td>
 				<td>
 					${baoxiuHuifang.createBy.name}
 				</td>

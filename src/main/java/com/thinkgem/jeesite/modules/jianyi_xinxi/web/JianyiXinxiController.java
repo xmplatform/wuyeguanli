@@ -67,6 +67,9 @@ public class JianyiXinxiController extends BaseController {
 		if (!beanValidator(model, jianyiXinxi)){
 			return form(jianyiXinxi, model);
 		}
+		//结果填写内容表示已处理，未填写则处理中
+		jianyiXinxi.setZhuangtai(jianyiXinxi.getJieguo().length()>0?"2":"1");
+		
 		jianyiXinxiService.save(jianyiXinxi);
 		addMessage(redirectAttributes, "保存建议成功");
 		return "redirect:"+Global.getAdminPath()+"/jianyi_xinxi/jianyiXinxi/?repage";

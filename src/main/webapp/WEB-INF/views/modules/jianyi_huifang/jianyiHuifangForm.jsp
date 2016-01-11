@@ -32,17 +32,12 @@
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="jianyiHuifang" action="${ctx}/jianyi_huifang/jianyiHuifang/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
-		<sys:message content="${message}"/>		
+		<sys:message content="${message}"/>
 		<div class="control-group">
 			<label class="control-label">回访简述：</label>
 			<div class="controls">
-				<form:input path="mingcheng" htmlEscape="false" maxlength="255" class="input-xlarge "/>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">信息id：</label>
-			<div class="controls">
-				<form:input path="xinxiid" htmlEscape="false" maxlength="64" class="input-xlarge "/>
+				<form:hidden path="xinxiid" htmlEscape="false" maxlength="64" class="input-xlarge "/>
+				<form:textarea path="mingcheng" htmlEscape="false" rows="4" maxlength="60" class="input-xxlarge "/>
 			</div>
 		</div>
 		<div class="form-actions">

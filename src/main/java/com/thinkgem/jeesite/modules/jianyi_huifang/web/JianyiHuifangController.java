@@ -17,10 +17,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.thinkgem.jeesite.common.config.Global;
 import com.thinkgem.jeesite.common.persistence.Page;
-import com.thinkgem.jeesite.common.web.BaseController;
 import com.thinkgem.jeesite.common.utils.StringUtils;
+import com.thinkgem.jeesite.common.web.BaseController;
 import com.thinkgem.jeesite.modules.jianyi_huifang.entity.JianyiHuifang;
 import com.thinkgem.jeesite.modules.jianyi_huifang.service.JianyiHuifangService;
+import com.thinkgem.jeesite.modules.jianyi_xinxi.service.JianyiXinxiService;
 
 /**
  * 建议回访Controller
@@ -33,6 +34,8 @@ public class JianyiHuifangController extends BaseController {
 
 	@Autowired
 	private JianyiHuifangService jianyiHuifangService;
+	@Autowired
+	private JianyiXinxiService jianyiService;
 	
 	@ModelAttribute
 	public JianyiHuifang get(@RequestParam(required=false) String id) {
@@ -50,6 +53,7 @@ public class JianyiHuifangController extends BaseController {
 	@RequestMapping(value = {"list", ""})
 	public String list(JianyiHuifang jianyiHuifang, HttpServletRequest request, HttpServletResponse response, Model model) {
 		Page<JianyiHuifang> page = jianyiHuifangService.findPage(new Page<JianyiHuifang>(request, response), jianyiHuifang); 
+		model.addAttribute("jianyiObj", jianyiService.get(jianyiHuifang.getXinxiid()));
 		model.addAttribute("page", page);
 		return "modules/jianyi_huifang/jianyiHuifangList";
 	}
@@ -69,7 +73,7 @@ public class JianyiHuifangController extends BaseController {
 		}
 		jianyiHuifangService.save(jianyiHuifang);
 		addMessage(redirectAttributes, "保存回访成功");
-		return "redirect:"+Global.getAdminPath()+"/jianyi_huifang/jianyiHuifang/?repage";
+		return "redirect:"+Global.getAdminPath()+"/jianyi_huifang/jianyiHuifang/?repage&xinxiid="+jianyiHuifang.getXinxiid();
 	}
 	
 	@RequiresPermissions("jianyi_huifang:jianyiHuifang:edit")

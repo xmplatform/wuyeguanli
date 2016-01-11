@@ -22,6 +22,13 @@
 					}
 				}
 			});
+			//请求处理人和处理结果，二者取其一
+			$('#chulirenName').bind('change',function(){
+				if($(this).val().length==0)
+					$('#jieguo').text('').attr('disabled',false);
+				else
+					$('#jieguo').text('').attr('disabled',true);
+			});
 		});
 	</script>
 </head>
@@ -56,7 +63,7 @@
 		<div class="control-group">
 			<label class="control-label">请求处理人：</label>
 			<div class="controls">
-				<sys:treeselect id="chuliren" name="chuliren.id" value="${jianyiXinxi.chuliren.id}" labelName="chuliren.chuliren.name" labelValue="${jianyiXinxi.chuliren.name}"
+				<sys:treeselect  id="chuliren" name="chuliren.id" value="${jianyiXinxi.chuliren.id}" labelName="chuliren.name" labelValue="${jianyiXinxi.chuliren.name}"
 					title="用户" url="/sys/office/treeData?type=3" cssClass="" allowClear="true" notAllowSelectParent="true"/>
 			</div>
 		</div>

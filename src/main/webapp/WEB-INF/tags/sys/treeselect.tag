@@ -70,11 +70,11 @@
 						break; // 如果为非复选框选择，则返回第一个选择  </c:if>
 					}
 					$("#${id}Id").val(ids.join(",").replace(/u_/ig,""));
-					$("#${id}Name").val(names.join(","));
+					$("#${id}Name").val(names.join(",")).trigger('change');
 				}//<c:if test="${allowClear}">
 				else if (v=="clear"){
 					$("#${id}Id").val("");
-					$("#${id}Name").val("");
+					$("#${id}Name").val("").trigger('change');
                 }//</c:if>
 				if(typeof ${id}TreeselectCallBack == 'function'){
 					${id}TreeselectCallBack(v, h, f);

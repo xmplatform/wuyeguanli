@@ -66,7 +66,7 @@
 				<shiro:hasPermission name="jianyi_xinxi:jianyiXinxi:edit"><td>
     				<a href="${ctx}/jianyi_xinxi/jianyiXinxi/form?id=${jianyiXinxi.id}">修改</a>
 					<a href="${ctx}/jianyi_xinxi/jianyiXinxi/delete?id=${jianyiXinxi.id}" onclick="return confirmx('确认要删除该建议吗？', this.href)">删除</a>
-					<a href="${ctx}/jianyi_huifang/jianyiHuifang?xinxiId=${jianyiXinxi.id}">客户回访</a>
+					<a href="${ctx}/jianyi_huifang/jianyiHuifang?xinxiid=${jianyiXinxi.id}">客户回访</a>
 				</td></shiro:hasPermission>
 			</tr>
 		</c:forEach>
