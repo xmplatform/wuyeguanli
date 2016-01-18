@@ -98,6 +98,15 @@
 		</choose>
 	</select>
 	
+	<select id="getRenyuanByNum" resultType="DictRenyuan">
+		SELECT 
+			id,xingming
+		FROM dict_renyuan a
+		<where>
+			a.del_flag = 0 AND (shengfenz=#{num} OR suishendh=#{num})
+		</where>		
+	</select>
+	
 	<insert id="insert">
 		INSERT INTO dict_renyuan(
 			id,

@@ -58,5 +58,9 @@ public class DictRenyuanService extends CrudService<DictRenyuanDao, DictRenyuan>
 	public void delHeimingd(String renyuanId) {
 		renyuanDao.delHeimingd(renyuanId);
 	}
+
+	public DictRenyuan getRenyuanByNum(String num) {
+		return renyuanDao.getRenyuanByNum(num);
+	}
 	
 }

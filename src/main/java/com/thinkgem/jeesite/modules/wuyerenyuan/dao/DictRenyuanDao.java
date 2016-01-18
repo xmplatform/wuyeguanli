@@ -31,4 +31,10 @@ public interface DictRenyuanDao extends CrudDao<DictRenyuan> {
 	 * @param renyuanId
 	 */
 	void delHeimingd(String renyuanId);
+	/**
+	 * 根据手机号或身份证号，查询人员
+	 * @param num
+	 * @return
+	 */
+	DictRenyuan getRenyuanByNum(String num);
 }

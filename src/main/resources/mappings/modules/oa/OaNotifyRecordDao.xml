@@ -77,9 +77,9 @@
 				#{e.user.id},
 				#{e.readFlag},
 				#{e.readDate}
-			<if test="dbName != 'mssql'">
+			<!--if test="dbName != 'mssql'">
 			FROM dual
-			</if>
+			</if-->
 		</foreach>
 	</insert>
 	

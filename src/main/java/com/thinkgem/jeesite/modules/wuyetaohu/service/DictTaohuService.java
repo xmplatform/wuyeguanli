@@ -71,5 +71,5 @@ public class DictTaohuService extends CrudService<DictTaohuDao, DictTaohu> {
 			return list.get(0);
 		return null;
 	}
-	
+
 }
