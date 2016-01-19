@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.daishou_huogui.dao.DaishouHuoguiDao">
+    
+	<sql id="daishouHuoguiColumns">
+		a.id AS "id",
+		a.haoma AS "haoma",
+		a.mingcheng AS "mingcheng",
+		a.weizhi AS "weizhi",
+		a.remarks AS "remarks",
+		a.zhuangtai AS "zhuangtai",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="daishouHuoguiJoins">
+	</sql>
+    
+	<select id="get" resultType="DaishouHuogui">
+		SELECT 
+			<include refid="daishouHuoguiColumns"/>
+		FROM daishou_huogui a
+		<include refid="daishouHuoguiJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="DaishouHuogui">
+		SELECT 
+			<include refid="daishouHuoguiColumns"/>
+		FROM daishou_huogui a
+		<include refid="daishouHuoguiJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="mingcheng != null and mingcheng != ''">
+				AND a.mingcheng LIKE 
+					<if test="dbName == 'oracle'">'%'||#{mingcheng}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{mingcheng}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{mingcheng},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="DaishouHuogui">
+		SELECT 
+			<include refid="daishouHuoguiColumns"/>
+		FROM daishou_huogui a
+		<include refid="daishouHuoguiJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO daishou_huogui(
+			id,
+			haoma,
+			mingcheng,
+			weizhi,
+			remarks,
+			zhuangtai,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			del_flag
+		) VALUES (
+			#{id},
+			#{haoma},
+			#{mingcheng},
+			#{weizhi},
+			#{remarks},
+			#{zhuangtai},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE daishou_huogui SET 	
+			haoma = #{haoma},
+			mingcheng = #{mingcheng},
+			weizhi = #{weizhi},
+			remarks = #{remarks},
+			zhuangtai = #{zhuangtai},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE daishou_huogui SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
