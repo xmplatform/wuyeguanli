@@ -645,6 +645,11 @@
 			<artifactId>UserAgentUtils</artifactId>
 			<version>1.13</version>
 		</dependency>
+		<dependency>
+			<groupId>com.google.zxing</groupId>
+			<artifactId>core</artifactId>
+			<version>3.1.0</version>
+		</dependency>
 		
 		<!-- 自定义jar依赖包
 		<dependency>

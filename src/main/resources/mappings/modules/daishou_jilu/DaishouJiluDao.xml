@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.daishou_jilu.dao.DaishouJiluDao">
+    
+	<sql id="daishouJiluColumns">
+		a.id AS "id",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag",
+		a.shouhuoxm AS "shouhuoxm",
+		a.shouhuodh AS "shouhuodh",
+		a.shouhuodz AS "shouhuodz",
+		a.cunfangsj AS "cunfangsj",
+		b.id AS "wuliugs.id",
+		b.mingcheng AS "wuliugs.mingcheng",
+		c.id AS "huogui.id",
+		c.mingcheng AS "huogui.mingcheng",
+		a.huowutm AS "huowutm",
+		a.quhuoewm AS "quhuoewm",
+		a.quhuoxm AS "quhuoxm",
+		a.quhuodh AS "quhuodh",
+		a.quhuosj AS "quhuosj",
+		a.status AS "status"
+	</sql>
+	
+	<sql id="daishouJiluJoins">
+		LEFT JOIN daishou_wuliugs b ON b.id=a.wuliugs
+		LEFT JOIN daishou_huogui c ON c.id=a.huoguiid
+	</sql>
+    
+	<select id="get" resultType="DaishouJilu">
+		SELECT 
+			<include refid="daishouJiluColumns"/>
+		FROM daishou_jilu a
+		<include refid="daishouJiluJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="DaishouJilu">
+		SELECT 
+			<include refid="daishouJiluColumns"/>
+		FROM daishou_jilu a
+		<include refid="daishouJiluJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="shouhuoxm != null and shouhuoxm != ''">
+				AND a.shouhuoxm = #{shouhuoxm}
+			</if>
+			<if test="wuliugs != null and wuliugs.id != null and wuliugs.id != ''">
+				AND a.wuliugs = #{wuliugs.id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="DaishouJilu">
+		SELECT 
+			<include refid="daishouJiluColumns"/>
+		FROM daishou_jilu a
+		<include refid="daishouJiluJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO daishou_jilu(
+			id,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag,
+			shouhuoxm,
+			shouhuodh,
+			shouhuodz,
+			cunfangsj,
+			wuliugs,
+			huoguiid,
+			huowutm,
+			status
+		) VALUES (
+			#{id},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag},
+			#{shouhuoxm},
+			#{shouhuodh},
+			#{shouhuodz},
+			#{cunfangsj},
+			#{wuliugs.id},
+			#{huogui.id},
+			#{huowutm},
+			0
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE daishou_jilu SET 	
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks},
+			shouhuoxm = #{shouhuoxm},
+			shouhuodh = #{shouhuodh},
+			shouhuodz = #{shouhuodz},
+			cunfangsj = #{cunfangsj},
+			wuliugs = #{wuliugs.id},
+			huoguiid = #{huogui.id},
+			huowutm = #{huowutm},
+			quhuoewm = #{quhuoewm},
+			quhuoxm = #{quhuoxm},
+			quhuodh = #{quhuodh},
+			quhuosj = #{quhuosj},
+			status = #{status}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE daishou_jilu SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
