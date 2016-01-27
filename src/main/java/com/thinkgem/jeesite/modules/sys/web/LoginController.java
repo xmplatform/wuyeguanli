@@ -47,7 +47,6 @@ public class LoginController extends BaseController{
 	 */
 	@RequestMapping(value = "${adminPath}/login", method = RequestMethod.GET)
 	public String login(HttpServletRequest request, HttpServletResponse response, Model model) {
-		response.setHeader("Access-Control-Allow-Origin", "*");
 		Principal principal = UserUtils.getPrincipal();
 
 //		// 默认页签模式

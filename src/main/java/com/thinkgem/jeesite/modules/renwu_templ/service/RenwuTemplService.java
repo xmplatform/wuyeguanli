@@ -30,6 +30,7 @@ public class RenwuTemplService extends TreeService<RenwuTemplDao, RenwuTempl> {
 		if (StringUtils.isNotBlank(renwuTempl.getParentIds())){
 			renwuTempl.setParentIds(","+renwuTempl.getParentIds()+",");
 		}
+		dataScopeFilter(renwuTempl, "dsf", "id=o.id", "id=a.create_by");
 		return super.findList(renwuTempl);
 	}
 	

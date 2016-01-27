@@ -15,7 +15,7 @@ import com.thinkgem.jeesite.modules.wuyerenyuan.entity.DictRenyuan;
 import com.thinkgem.jeesite.modules.wuyerenyuan.service.DictRenyuanService;
 
 @Controller
-@RequestMapping(value = "${frontPath}/mobile")
+@RequestMapping(value = "${adminPath}/mobile")
 public class MobileController extends BaseController{
 	@Autowired
 	private DictRenyuanService renyuanService;
